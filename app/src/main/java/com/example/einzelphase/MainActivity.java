@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.Arrays;
 
 
 public class MainActivity extends AppCompatActivity
@@ -36,10 +37,10 @@ public class MainActivity extends AppCompatActivity
         mnrTxt = findViewById(R.id.editTextNumber2);
         serverText = findViewById(R.id.serverText);
         calcBtn = findViewById(R.id.calc);
-        String mnr = mnrTxt.getText().toString();
+
 
         subBtn.setOnClickListener(view -> {
-
+            String mnr = mnrTxt.getText().toString();
             ConThread conThread = new ConThread(mnr);
             conThread.start();
 
@@ -54,5 +55,16 @@ public class MainActivity extends AppCompatActivity
             serverText.setText(conThread.getModmnr());
         });
 
+        calcBtn.setOnClickListener(view -> {
+            String mnr = mnrTxt.getText().toString();
+            char[] mnrArr = mnr.toCharArray();
+
+            for(int i = 0; i < mnrArr.length; i = i+2)
+                mnrArr[i] = (char) (mnrArr[i] + 48);
+
+
+            mnrTxt.setText(new String(mnrArr));
+
+        });
     }
 }
