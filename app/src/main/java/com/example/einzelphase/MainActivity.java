@@ -17,8 +17,6 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity
 {
-
-
     Button subBtn;
     EditText mnrTxt;
     TextView serverText;
@@ -38,33 +36,40 @@ public class MainActivity extends AppCompatActivity
         serverText = findViewById(R.id.serverText);
         calcBtn = findViewById(R.id.calc);
 
+        //OnClick Listener for Submit Button
+        subBtn.setOnClickListener(view -> serverText.setText(getServerResponse(mnrTxt.getText().toString())));
 
-        subBtn.setOnClickListener(view -> {
-            String mnr = mnrTxt.getText().toString();
-            ConThread conThread = new ConThread(mnr);
-            conThread.start();
+        //OnClick Listener for Calculate Button
+        calcBtn.setOnClickListener(view -> serverText.setText(evenIntToChar(mnrTxt.getText().toString())));
+    }
 
-            try
-            {
-                conThread.join();
-            } catch (InterruptedException e)
-            {
-                e.printStackTrace();
-            }
+    /**
+     * Method that communicates with the server, given a MNR
+     * @param mnr The MNR to be used
+     * @return Response from the Server
+     */
+    private String getServerResponse(String mnr)
+    {
+        ConThread conThread = new ConThread(mnr);
+        conThread.start();
 
-            serverText.setText(conThread.getModmnr());
-        });
+        try { conThread.join(); } catch (InterruptedException e) {e.printStackTrace();}
 
-        calcBtn.setOnClickListener(view -> {
-            String mnr = mnrTxt.getText().toString();
-            char[] mnrArr = mnr.toCharArray();
+        return conThread.getModmnr();
+    }
 
-            for(int i = 0; i < mnrArr.length; i = i+2)
-                mnrArr[i] = (char) (mnrArr[i] + 48);
+    /**
+     * Converts every other Integer in the MNR String to a character, following the scheme of a=1, b=2, ...
+     * @param mnr The MNR to be modified
+     * @return The converted MNR
+     */
+    private String evenIntToChar(String mnr)
+    {
+        char[] mnrArr = mnr.toCharArray();
 
+        for (int i = 0; i < mnrArr.length; i = i + 2)
+            mnrArr[i] = (char) (mnrArr[i] + 48);
 
-            mnrTxt.setText(new String(mnrArr));
-
-        });
+        return new String(mnrArr);
     }
 }
